@@ -1,0 +1,597 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Figure 313</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-11-21"><meta name="DC.source" content="figure_313.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Figure 313</h1><!--introduction--><p>Check interpretation of coefficients in anisotropic CRS formula</p><p><b>Author</b>: Abakumov Ivan <b>Publication date</b>: 31st August 2016</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Define working folder, add links to Library and SeisLab</a></li><li><a href="#2">Introduction</a></li><li><a href="#4">Get model parameters</a></li><li><a href="#5">Get acquisition geometry</a></li><li><a href="#6">Plot acquisition geometry</a></li><li><a href="#7">Find stacking parameters</a></li><li><a href="#8">isotropic homogeneous overburden:</a></li></ul></div><h2>Define working folder, add links to Library and SeisLab<a name="1"></a></h2><pre class="codeinput">clear; close <span class="string">all</span>; clc;
+mlibfolder = <span class="string">'/home/zmaw/u250128/Desktop/MLIB'</span>;
+path(path, mlibfolder);
+addmypath;
+</pre><h2>Introduction<a name="2"></a></h2><pre class="codeinput"><span class="comment">% Note:</span>
+<span class="comment">% Accuracy of traveltime 10e-12</span>
+<span class="comment">% Accuracy of attributes 10e-10</span>
+
+<span class="keyword">for</span> model = 64:64
+</pre><pre class="codeinput">    acquisition = 2;
+</pre><h2>Get model parameters<a name="4"></a></h2><pre class="codeinput">    Get_model_parameters;
+</pre><h2>Get acquisition geometry<a name="5"></a></h2><pre class="codeinput">    Get_model_acquisition_geometry;
+</pre><h2>Plot acquisition geometry<a name="6"></a></h2><pre class="codeinput">    figure(1)
+    [XX, YY] = meshgrid(G.xx, G.yy);
+    [ZZ, ind] = Get_model_surface(XX,YY,model);
+    surf(XX,YY,ZZ);
+    hold <span class="string">on</span>
+    plot3(Xs(1,:),Xs(2,:),Xs(3,:), <span class="string">'rv'</span>);
+    plot3(Xg(1,:),Xg(2,:),Xg(3,:), <span class="string">'g^'</span>);
+    plot3(X0(1),X0(2),X0(3), <span class="string">'b*'</span>);
+    axis([G.x0, G.mx, G.y0, G.my, G.z0, G.mz]);
+    xlabel(<span class="string">'Inline  [m]'</span>);
+    ylabel(<span class="string">'Crossline [m]'</span>);
+    zlabel(<span class="string">'Depth  [m]'</span>);
+    view(3);
+    set(gca, <span class="string">'ZDir'</span>, <span class="string">'reverse'</span>)
+</pre><img vspace="5" hspace="5" src="figure_313_01.png" alt=""> <h2>Find stacking parameters<a name="7"></a></h2><p>w3, M3 and N3 are stacking parameters. They could be transformed to wavefield attributes</p><div><ul><li>V - phase velocity</li><li>alpha, beta - phase angles</li><li>theta, phi - group angles</li></ul></div><h2>isotropic homogeneous overburden:<a name="8"></a></h2><pre class="codeinput">    model = 61;
+    [ t0, w3, M3, N3 ] = Get_model_stacking_parameters( X0, model );
+
+    v0 = 2/norm(w3);
+
+    [ alpha, beta, KNIP, KN ] = my_A3P(v0, w3, M3, N3);
+
+    KNIP = KNIP
+    KN = KN
+
+
+
+
+
+
+<span class="comment">%      % either take (x,y) components and find wavefield attributes:</span>
+<span class="comment">%      % (reality)</span>
+<span class="comment">%      w = w3(1:2, 1);</span>
+<span class="comment">%      N = N3(1:2, 1:2);</span>
+<span class="comment">%      M = M3(1:2, 1:2);</span>
+<span class="comment">%      %[ alpha, beta, KNIP, KN ] = my_A2P(v0, w, M, N);</span>
+
+     <span class="comment">% or find wavefield attributes and make from them stacking parameters:</span>
+     <span class="comment">% (theory)</span>
+<span class="comment">%      [ alpha, beta, KNIP3, KN3 ] = my_A3P(v0, w3, M3, N3);</span>
+<span class="comment">%       KNIP = KNIP3(1:2,1:2);</span>
+<span class="comment">%       KN   = KN3  (1:2,1:2);</span>
+<span class="comment">%       [ w, M, N ] = my_P2A(v0, alpha, beta, KNIP, KN);</span>
+<span class="comment">%</span>
+<span class="comment">%     %% Exact traveltimes</span>
+<span class="comment">%</span>
+<span class="comment">%     % download exact traveltimes</span>
+<span class="comment">%     tti_ex = MLD([mlibfolder '/CRS/models/model_' num2str(model) '_traveltimes_for_acq_' num2str(acquisition) '.mat']);</span>
+<span class="comment">%</span>
+<span class="comment">%     % or calculation exact traveltimes again</span>
+<span class="comment">%</span>
+<span class="comment">%   %    tic</span>
+<span class="comment">%   %    tti_ex = Get_model_exact_traveltime(Xs, Xg, model);</span>
+<span class="comment">%   %    toc</span>
+<span class="comment">%   %    save([mlibfolder '/CRS/models/model_' num2str(model) '_traveltimes_for_acq_' num2str(acquisition) '.mat'], 'tti_ex');</span>
+<span class="comment">%</span>
+<span class="comment">%     %% Traveltime approximations</span>
+<span class="comment">%</span>
+<span class="comment">%     HH = (Xg(1:2, :) - Xs(1:2,:))/2;</span>
+<span class="comment">%     MM = (Xg(1:2, :) + Xs(1:2,:))/2;</span>
+<span class="comment">%     MM(1,:) = MM(1,:) - X0(1);</span>
+<span class="comment">%     MM(2,:) = MM(2,:) - X0(2);</span>
+<span class="comment">%</span>
+<span class="comment">%     %% temp</span>
+<span class="comment">%     % prepare parameters for cpp functions</span>
+<span class="comment">%     hx = HH(1,:);</span>
+<span class="comment">%     hy = HH(2,:);</span>
+<span class="comment">%     mx = MM(1,:);</span>
+<span class="comment">%     my = MM(2,:);</span>
+<span class="comment">%     hxhx = hx.*hx;</span>
+<span class="comment">%     hxhy = hx.*hy;</span>
+<span class="comment">%     hyhy = hy.*hy;</span>
+<span class="comment">%     mxmx = mx.*mx;</span>
+<span class="comment">%     mxmy = mx.*my;</span>
+<span class="comment">%     mymy = my.*my;</span>
+<span class="comment">%</span>
+<span class="comment">%     attr(1,1) =   w(1);</span>
+<span class="comment">%     attr(2,1) =   w(2);</span>
+<span class="comment">%     attr(3,1) =   M(1,1);</span>
+<span class="comment">%     attr(4,1) =   M(1,2);</span>
+<span class="comment">%     attr(5,1) =   M(2,2);</span>
+<span class="comment">%     attr(6,1) =   N(1,1);</span>
+<span class="comment">%     attr(7,1) =   N(1,2);</span>
+<span class="comment">%     attr(8,1) =   N(2,2);</span>
+<span class="comment">%     attr(9,1) =   t0;</span>
+<span class="comment">%     attr(10,1) =  v0;</span>
+<span class="comment">%</span>
+<span class="comment">%      %%</span>
+<span class="comment">%     tic</span>
+<span class="comment">%     %tti_crs = Get_traveltime_3D_CRS (MM, HH, t0, w, M, N);</span>
+<span class="comment">%     tti_crs = Get_traveltime_3D_CRS_cpp(attr,mx,my, hx, hy, mxmx, mxmy, mymy, hxhx, hxhy, hyhy);</span>
+<span class="comment">%     ctime.crs = toc;</span>
+<span class="comment">%     %</span>
+<span class="comment">%     tic</span>
+<span class="comment">%     %tti_dsr = Get_traveltime_3D_DSR (MM, HH, t0, w, M, N);</span>
+<span class="comment">%     tti_dsr = Get_traveltime_3D_DSR_cpp(attr,mx,my, hx, hy, mxmx, mxmy, mymy, hxhx, hxhy, hyhy);</span>
+<span class="comment">%     ctime.dsr = toc;</span>
+<span class="comment">%     %</span>
+<span class="comment">%     tic</span>
+<span class="comment">%     %tti_ncrs = Get_traveltime_3D_nCRS(MM, HH, t0, w, M, N);</span>
+<span class="comment">%     tti_ncrs = Get_traveltime_3D_nCRS_cpp(attr,mx,my, hx, hy, mxmx, mxmy, mymy, hxhx, hxhy, hyhy);</span>
+<span class="comment">%     ctime.ncrs = toc;</span>
+<span class="comment">%     %</span>
+<span class="comment">%     tic</span>
+<span class="comment">%     tti_icrs_par_LIA = Get_traveltime_3D_iCRS_par_LIA(MM, HH, t0, w, M, N, 3);</span>
+<span class="comment">%     ctime.icrs_par_LIA = toc;</span>
+<span class="comment">%     %</span>
+<span class="comment">%     tic</span>
+<span class="comment">%     tti_icrs_el_LIA = Get_traveltime_3D_iCRS_el_LIA(MM, HH, t0, v0, w, M, N, 3);</span>
+<span class="comment">%     ctime.icrs_el_LIA = toc;</span>
+<span class="comment">%     %</span>
+<span class="comment">%     tic</span>
+<span class="comment">%     tti_icrs_el_TIA = Get_traveltime_3D_iCRS_el_TIA(MM, HH, t0, v0, w, M, N, 3);</span>
+<span class="comment">%     ctime.icrs_el_TIA = toc;</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%     ctime.crs = ctime.crs/ctime.ncrs;</span>
+<span class="comment">%     ctime.dsr = ctime.dsr/ctime.ncrs;</span>
+<span class="comment">%     ctime.icrs_el_LIA = ctime.icrs_el_LIA/ctime.ncrs;</span>
+<span class="comment">%     ctime.icrs_el_TIA = ctime.icrs_el_TIA/ctime.ncrs;</span>
+<span class="comment">%     ctime.icrs_par_LIA = ctime.icrs_par_LIA/ctime.ncrs;</span>
+<span class="comment">%     ctime.ncrs = 1;</span>
+<span class="comment">%</span>
+</pre><pre class="codeoutput">
+KNIP =
+
+   1.0e-03 *
+
+    0.8573    0.0000    0.0000
+    0.0000    0.8573    0.0000
+    0.0000    0.0000   -0.0000
+
+
+KN =
+
+   1.0e-03 *
+
+    0.3485   -0.0077   -0.0000
+   -0.0077    0.3873   -0.0000
+    0.0000   -0.0000    0.0000
+
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+<span class="comment">%</span>
+<span class="comment">% %%</span>
+<span class="comment">% texac = reshape(tti_ex,81,41);</span>
+<span class="comment">% tcrs  = reshape(tti_crs,81,41);</span>
+<span class="comment">% tncrs = reshape(tti_ncrs,81,41);</span>
+<span class="comment">% tdsr  = reshape(tti_dsr,81,41);</span>
+<span class="comment">% ticrs1 = reshape(tti_icrs_par_LIA(end,:),81,41);</span>
+<span class="comment">% ticrs2 = reshape(tti_icrs_el_LIA(end,:),81,41);</span>
+<span class="comment">% ticrs3 = reshape(tti_icrs_el_TIA(end,:),81,41);</span>
+<span class="comment">%</span>
+<span class="comment">% m = -500:25:500;</span>
+<span class="comment">% h = 0:25:2000;</span>
+<span class="comment">%</span>
+<span class="comment">% figure(1)</span>
+<span class="comment">% suptitle('Relative errors')</span>
+<span class="comment">% %</span>
+<span class="comment">% subplot(3,2,1)</span>
+<span class="comment">% data = (tcrs - texac)./texac*100;</span>
+<span class="comment">% imagesc(h,m',flipud(data'))</span>
+<span class="comment">% xlabel('h [m]');</span>
+<span class="comment">% ylabel('m [m]');</span>
+<span class="comment">% title('CRS')</span>
+<span class="comment">% colorbar</span>
+<span class="comment">% colormap('Jet');</span>
+<span class="comment">% caxis([-2 2])</span>
+<span class="comment">% hold on</span>
+<span class="comment">% contour(h,m',flipud(data'),'color','k','ShowText','on')</span>
+<span class="comment">% c = colorbar('Ticks', [-2,-1 0, 1, 2]);</span>
+<span class="comment">% c.Label.String = 'Error %';</span>
+<span class="comment">%</span>
+<span class="comment">% subplot(3,2,3)</span>
+<span class="comment">% data = (tdsr - texac)./texac*100;</span>
+<span class="comment">% imagesc(h,m',flipud(data'))</span>
+<span class="comment">% xlabel('h [m]');</span>
+<span class="comment">% ylabel('m [m]');</span>
+<span class="comment">% title('DSR')</span>
+<span class="comment">% colorbar</span>
+<span class="comment">% colormap('Jet');</span>
+<span class="comment">% caxis([-2 2])</span>
+<span class="comment">% hold on</span>
+<span class="comment">% contour(h,m',flipud(data'),'color','k','ShowText','on')</span>
+<span class="comment">% c = colorbar('Ticks', [-2,-1 0, 1, 2]);</span>
+<span class="comment">% c.Label.String = 'Error %';</span>
+<span class="comment">%</span>
+<span class="comment">% subplot(3,2,5)</span>
+<span class="comment">% data = (tncrs - texac)./texac*100;</span>
+<span class="comment">% imagesc(h,m',flipud(data'))</span>
+<span class="comment">% xlabel('h [m]');</span>
+<span class="comment">% ylabel('m [m]');</span>
+<span class="comment">% title('n-CRS')</span>
+<span class="comment">% colorbar</span>
+<span class="comment">% colormap('Jet');</span>
+<span class="comment">% caxis([-2 2])</span>
+<span class="comment">% hold on</span>
+<span class="comment">% contour(h,m',flipud(data'),'color','k','ShowText','on')</span>
+<span class="comment">% c = colorbar('Ticks', [-2,-1 0, 1, 2]);</span>
+<span class="comment">% c.Label.String = 'Error %';</span>
+<span class="comment">%</span>
+<span class="comment">% subplot(3,2,2)</span>
+<span class="comment">% data = (ticrs1 - texac)./texac*100;</span>
+<span class="comment">% imagesc(h,m',flipud(data'))</span>
+<span class="comment">% xlabel('h [m]');</span>
+<span class="comment">% ylabel('m [m]');</span>
+<span class="comment">% title('i-CRS, LIA (paraboloid)')</span>
+<span class="comment">% colorbar</span>
+<span class="comment">% colormap('Jet');</span>
+<span class="comment">% caxis([-2 2])</span>
+<span class="comment">% hold on</span>
+<span class="comment">% contour(h,m',flipud(data'),'color','k','ShowText','on')</span>
+<span class="comment">% c = colorbar('Ticks', [-2,-1 0, 1, 2]);</span>
+<span class="comment">% c.Label.String = 'Error %';</span>
+<span class="comment">%</span>
+<span class="comment">% subplot(3,2,4)</span>
+<span class="comment">% data = (ticrs2 - texac)./texac*100;</span>
+<span class="comment">% imagesc(h,m',flipud(data'))</span>
+<span class="comment">% xlabel('h [m]');</span>
+<span class="comment">% ylabel('m [m]');</span>
+<span class="comment">% title('i-CRS, LIA (ellipsoid)')</span>
+<span class="comment">% colorbar</span>
+<span class="comment">% colormap('Jet');</span>
+<span class="comment">% caxis([-2 2])</span>
+<span class="comment">% hold on</span>
+<span class="comment">% contour(h,m',flipud(data'),'color','k','ShowText','on')</span>
+<span class="comment">% c = colorbar('Ticks', [-2,-1 0, 1, 2]);</span>
+<span class="comment">% c.Label.String = 'Error %';</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% subplot(3,2,6)</span>
+<span class="comment">% data = (ticrs3 - texac)./texac*100;</span>
+<span class="comment">% imagesc(h,m',flipud(data'))</span>
+<span class="comment">% xlabel('h [m]');</span>
+<span class="comment">% ylabel('m [m]');</span>
+<span class="comment">% title('i-CRS, TIA (ellipsoid)')</span>
+<span class="comment">% colorbar</span>
+<span class="comment">% colormap('Jet');</span>
+<span class="comment">% caxis([-2 2])</span>
+<span class="comment">% hold on</span>
+<span class="comment">% contour(h,m',flipud(data'),'color','k','ShowText','on')</span>
+<span class="comment">% c = colorbar('Ticks', [-2,-1 0, 1, 2]);</span>
+<span class="comment">% c.Label.String = 'Error %';</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Figure 313
+% Check interpretation of coefficients in anisotropic CRS formula
+% 
+% *Author*: Abakumov Ivan
+% *Publication date*: 31st August 2016
+
+%% Define working folder, add links to Library and SeisLab 
+
+clear; close all; clc;
+mlibfolder = '/home/zmaw/u250128/Desktop/MLIB';
+path(path, mlibfolder);
+addmypath;
+
+%% Introduction
+
+% Note:
+% Accuracy of traveltime 10e-12
+% Accuracy of attributes 10e-10
+
+for model = 64:64
+    acquisition = 2;
+
+    %% Get model parameters
+    
+    Get_model_parameters; 
+    
+    %% Get acquisition geometry
+
+    Get_model_acquisition_geometry; 
+
+    %% Plot acquisition geometry
+    figure(1)
+    [XX, YY] = meshgrid(G.xx, G.yy);
+    [ZZ, ind] = Get_model_surface(XX,YY,model);
+    surf(XX,YY,ZZ); 
+    hold on
+    plot3(Xs(1,:),Xs(2,:),Xs(3,:), 'rv');
+    plot3(Xg(1,:),Xg(2,:),Xg(3,:), 'g^');
+    plot3(X0(1),X0(2),X0(3), 'b*');
+    axis([G.x0, G.mx, G.y0, G.my, G.z0, G.mz]);
+    xlabel('Inline  [m]'); 
+    ylabel('Crossline [m]'); 
+    zlabel('Depth  [m]'); 
+    view(3); 
+    set(gca, 'ZDir', 'reverse')
+    
+    %% Find stacking parameters
+    % w3, M3 and N3 are stacking parameters. 
+    % They could be transformed to wavefield attributes
+    %
+    % * V - phase velocity
+    % * alpha, beta - phase angles
+    % * theta, phi - group angles
+    %
+    
+    %% isotropic homogeneous overburden: 
+    model = 61;
+    [ t0, w3, M3, N3 ] = Get_model_stacking_parameters( X0, model );
+
+    v0 = 2/norm(w3);
+    
+    [ alpha, beta, KNIP, KN ] = my_A3P(v0, w3, M3, N3);
+    
+    KNIP = KNIP  
+    KN = KN 
+    
+    
+    
+    
+    
+    
+%      % either take (x,y) components and find wavefield attributes:
+%      % (reality)
+%      w = w3(1:2, 1); 
+%      N = N3(1:2, 1:2);
+%      M = M3(1:2, 1:2);  
+%      %[ alpha, beta, KNIP, KN ] = my_A2P(v0, w, M, N);
+         
+     % or find wavefield attributes and make from them stacking parameters:
+     % (theory)
+%      [ alpha, beta, KNIP3, KN3 ] = my_A3P(v0, w3, M3, N3);
+%       KNIP = KNIP3(1:2,1:2); 
+%       KN   = KN3  (1:2,1:2);
+%       [ w, M, N ] = my_P2A(v0, alpha, beta, KNIP, KN);
+%     
+%     %% Exact traveltimes
+%     
+%     % download exact traveltimes
+%     tti_ex = MLD([mlibfolder '/CRS/models/model_' num2str(model) '_traveltimes_for_acq_' num2str(acquisition) '.mat']);
+%     
+%     % or calculation exact traveltimes again
+% 
+%   %    tic
+%   %    tti_ex = Get_model_exact_traveltime(Xs, Xg, model);
+%   %    toc
+%   %    save([mlibfolder '/CRS/models/model_' num2str(model) '_traveltimes_for_acq_' num2str(acquisition) '.mat'], 'tti_ex'); 
+%        
+%     %% Traveltime approximations
+%     
+%     HH = (Xg(1:2, :) - Xs(1:2,:))/2;
+%     MM = (Xg(1:2, :) + Xs(1:2,:))/2;
+%     MM(1,:) = MM(1,:) - X0(1); 
+%     MM(2,:) = MM(2,:) - X0(2);
+%      
+%     %% temp
+%     % prepare parameters for cpp functions
+%     hx = HH(1,:); 
+%     hy = HH(2,:); 
+%     mx = MM(1,:); 
+%     my = MM(2,:); 
+%     hxhx = hx.*hx; 
+%     hxhy = hx.*hy; 
+%     hyhy = hy.*hy;
+%     mxmx = mx.*mx; 
+%     mxmy = mx.*my; 
+%     mymy = my.*my; 
+%      
+%     attr(1,1) =   w(1); 
+%     attr(2,1) =   w(2); 
+%     attr(3,1) =   M(1,1); 
+%     attr(4,1) =   M(1,2); 
+%     attr(5,1) =   M(2,2); 
+%     attr(6,1) =   N(1,1); 
+%     attr(7,1) =   N(1,2); 
+%     attr(8,1) =   N(2,2);
+%     attr(9,1) =   t0; 
+%     attr(10,1) =  v0; 
+%      
+%      %%
+%     tic
+%     %tti_crs = Get_traveltime_3D_CRS (MM, HH, t0, w, M, N);
+%     tti_crs = Get_traveltime_3D_CRS_cpp(attr,mx,my, hx, hy, mxmx, mxmy, mymy, hxhx, hxhy, hyhy);
+%     ctime.crs = toc; 
+%     %
+%     tic
+%     %tti_dsr = Get_traveltime_3D_DSR (MM, HH, t0, w, M, N);
+%     tti_dsr = Get_traveltime_3D_DSR_cpp(attr,mx,my, hx, hy, mxmx, mxmy, mymy, hxhx, hxhy, hyhy);
+%     ctime.dsr = toc; 
+%     %
+%     tic
+%     %tti_ncrs = Get_traveltime_3D_nCRS(MM, HH, t0, w, M, N);
+%     tti_ncrs = Get_traveltime_3D_nCRS_cpp(attr,mx,my, hx, hy, mxmx, mxmy, mymy, hxhx, hxhy, hyhy);
+%     ctime.ncrs = toc; 
+%     %
+%     tic
+%     tti_icrs_par_LIA = Get_traveltime_3D_iCRS_par_LIA(MM, HH, t0, w, M, N, 3);
+%     ctime.icrs_par_LIA = toc; 
+%     %
+%     tic
+%     tti_icrs_el_LIA = Get_traveltime_3D_iCRS_el_LIA(MM, HH, t0, v0, w, M, N, 3);
+%     ctime.icrs_el_LIA = toc; 
+%     %
+%     tic
+%     tti_icrs_el_TIA = Get_traveltime_3D_iCRS_el_TIA(MM, HH, t0, v0, w, M, N, 3);
+%     ctime.icrs_el_TIA = toc; 
+%     
+%      
+%      
+%     ctime.crs = ctime.crs/ctime.ncrs;
+%     ctime.dsr = ctime.dsr/ctime.ncrs;
+%     ctime.icrs_el_LIA = ctime.icrs_el_LIA/ctime.ncrs;
+%     ctime.icrs_el_TIA = ctime.icrs_el_TIA/ctime.ncrs;
+%     ctime.icrs_par_LIA = ctime.icrs_par_LIA/ctime.ncrs;
+%     ctime.ncrs = 1;
+%  
+
+
+   
+end
+
+% 
+% %%
+% texac = reshape(tti_ex,81,41); 
+% tcrs  = reshape(tti_crs,81,41); 
+% tncrs = reshape(tti_ncrs,81,41); 
+% tdsr  = reshape(tti_dsr,81,41); 
+% ticrs1 = reshape(tti_icrs_par_LIA(end,:),81,41); 
+% ticrs2 = reshape(tti_icrs_el_LIA(end,:),81,41); 
+% ticrs3 = reshape(tti_icrs_el_TIA(end,:),81,41); 
+% 
+% m = -500:25:500; 
+% h = 0:25:2000;
+% 
+% figure(1)
+% suptitle('Relative errors')
+% %
+% subplot(3,2,1)
+% data = (tcrs - texac)./texac*100;
+% imagesc(h,m',flipud(data'))
+% xlabel('h [m]'); 
+% ylabel('m [m]');
+% title('CRS')
+% colorbar
+% colormap('Jet'); 
+% caxis([-2 2])
+% hold on 
+% contour(h,m',flipud(data'),'color','k','ShowText','on')
+% c = colorbar('Ticks', [-2,-1 0, 1, 2]);
+% c.Label.String = 'Error %';
+%  
+% subplot(3,2,3)
+% data = (tdsr - texac)./texac*100;
+% imagesc(h,m',flipud(data'))
+% xlabel('h [m]'); 
+% ylabel('m [m]');
+% title('DSR')
+% colorbar
+% colormap('Jet'); 
+% caxis([-2 2])
+% hold on 
+% contour(h,m',flipud(data'),'color','k','ShowText','on')
+% c = colorbar('Ticks', [-2,-1 0, 1, 2]);
+% c.Label.String = 'Error %';
+%  
+% subplot(3,2,5)
+% data = (tncrs - texac)./texac*100;
+% imagesc(h,m',flipud(data'))
+% xlabel('h [m]'); 
+% ylabel('m [m]');
+% title('n-CRS')
+% colorbar
+% colormap('Jet'); 
+% caxis([-2 2])
+% hold on 
+% contour(h,m',flipud(data'),'color','k','ShowText','on')
+% c = colorbar('Ticks', [-2,-1 0, 1, 2]);
+% c.Label.String = 'Error %';
+% 
+% subplot(3,2,2)
+% data = (ticrs1 - texac)./texac*100;
+% imagesc(h,m',flipud(data'))
+% xlabel('h [m]'); 
+% ylabel('m [m]');
+% title('i-CRS, LIA (paraboloid)')
+% colorbar
+% colormap('Jet'); 
+% caxis([-2 2])
+% hold on 
+% contour(h,m',flipud(data'),'color','k','ShowText','on')
+% c = colorbar('Ticks', [-2,-1 0, 1, 2]);
+% c.Label.String = 'Error %';
+% 
+% subplot(3,2,4)
+% data = (ticrs2 - texac)./texac*100;
+% imagesc(h,m',flipud(data'))
+% xlabel('h [m]'); 
+% ylabel('m [m]');
+% title('i-CRS, LIA (ellipsoid)')
+% colorbar
+% colormap('Jet'); 
+% caxis([-2 2])
+% hold on 
+% contour(h,m',flipud(data'),'color','k','ShowText','on')
+% c = colorbar('Ticks', [-2,-1 0, 1, 2]);
+% c.Label.String = 'Error %';
+% 
+% 
+% subplot(3,2,6)
+% data = (ticrs3 - texac)./texac*100;
+% imagesc(h,m',flipud(data'))
+% xlabel('h [m]'); 
+% ylabel('m [m]');
+% title('i-CRS, TIA (ellipsoid)')
+% colorbar
+% colormap('Jet'); 
+% caxis([-2 2])
+% hold on 
+% contour(h,m',flipud(data'),'color','k','ShowText','on')
+% c = colorbar('Ticks', [-2,-1 0, 1, 2]);
+% c.Label.String = 'Error %';
+##### SOURCE END #####
+--></body></html>

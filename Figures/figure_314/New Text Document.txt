@@ -1,0 +1,30 @@
+ crs: 0.6838
+             dsr: 0.7166
+            ncrs: 1
+    icrs_par_LIA: 4.4706
+     icrs_el_LIA: 4.5481
+     icrs_el_TIA: 8.5088
+
+
+# 3D CRS code                           471 sec
+# 3D DSR code                           479 sec         1378
+# 3D n-CRS code                         229 sec         1219
+# 3D i-CRS code                                         2053
+
+
+
+
+
+i-CRS (II)
+1,1765
+1,2479
+1,4017
+0,9148
+1,7024
+
+i-CRS (III)
+1,4303
+1,2099
+1,5507
+0,9661
+1,5768

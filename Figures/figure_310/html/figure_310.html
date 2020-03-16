@@ -1,0 +1,272 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Check the idea that n-CRS sews two solutions: CRS and DSR</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-08-10"><meta name="DC.source" content="figure_310.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Check the idea that n-CRS sews two solutions: CRS and DSR</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Introduction</a></li><li><a href="#2">Define working folder, add links to Library and SeisLab</a></li><li><a href="#3">Define model parameters (See table 4.1):</a></li><li><a href="#5">Set offset and midpoint displacement</a></li><li><a href="#6">Part I: Calculate traveltimes of PP waves</a></li><li><a href="#7">Part II: Find traveltime approximation for PP and PS waves</a></li><li><a href="#9">Part III Compare approximations</a></li><li><a href="#10">Part IV Compare approximations</a></li><li><a href="#11">Part V Compare approximations</a></li></ul></div><h2>Introduction<a name="1"></a></h2><p><b>Author</b>: Abakumov Ivan</p><p><b>Publication date</b>: 10th August 2016</p><h2>Define working folder, add links to Library and SeisLab<a name="2"></a></h2><pre class="codeinput">clear; close <span class="string">all</span>; clc;
+mlibfolder = <span class="string">'/home/zmaw/u250128/Desktop/MLIB'</span>;
+path(path, mlibfolder);
+addmypath;
+current_folder = pwd;
+</pre><h2>Define model parameters (See table 4.1):<a name="3"></a></h2><pre class="codeinput">Rmin = 0.0001;              <span class="comment">% min radius of curvature (0.1 m)</span>
+Rmax = 10000;                <span class="comment">% max radius of curvature (10000 km)</span>
+R = logspace(log(Rmin)/log(10),log(Rmax)/log(10),50);
+TePP = zeros(size(R));
+TePS = zeros(size(R));
+T_CRS = zeros(size(R));
+T_nCRS = zeros(size(R));
+T_DSR = zeros(size(R));
+T_MF = zeros(size(R));
+T_iCRS    = zeros(size(R));
+T_DSR_PS  = zeros(size(R));
+T_CRS_PS = zeros(size(R));
+T_nCRS_PS = zeros(size(R));
+
+<span class="keyword">for</span> i=1:length(R)
+</pre><pre class="codeinput">    alpha = pi/6;               <span class="comment">% radian</span>
+    Rnip = 1.0;                 <span class="comment">% km</span>
+    Rn   = Rnip + R(i);         <span class="comment">% km</span>
+    Vp   = 3.2;                 <span class="comment">% km/s</span>
+    Vs   = 1.8;                 <span class="comment">% km/s</span>
+    modelPP = [alpha, Rnip, Rn, Vp, Vp];
+    modelPS = [alpha, Rnip, Rn, Vp, Vs];
+</pre><h2>Set offset and midpoint displacement<a name="5"></a></h2><pre class="codeinput">    m = 0.2;
+    h = 0.4;
+    [M,H]=meshgrid(m,h);
+</pre><h2>Part I: Calculate traveltimes of PP waves<a name="6"></a></h2><pre class="codeinput">    TePP(i) = Get_traveltime_2D_exact(M,H,modelPP);
+    TePS(i) = Get_traveltime_2D_exact(M,H,modelPS);
+</pre><h2>Part II: Find traveltime approximation for PP and PS waves<a name="7"></a></h2><pre class="codeinput">    <span class="comment">% PP approximations</span>
+    T_CRS(i)     = Get_traveltime_2D_CRS(M, H, modelPP);
+    T_nCRS(i)    = Get_traveltime_2D_nCRS(M, H, modelPP);
+    T_DSR(i)     = Get_traveltime_2D_DSR_PS(M, H, modelPP);
+    T_MF(i)      = Get_traveltime_2D_MF(M, H, modelPP);
+    T_iCRS(i)    = Get_traveltime_2D_iCRS(M, H, modelPP);
+
+    <span class="comment">% PS approximations</span>
+    T_DSR_PS(i)  = Get_traveltime_2D_DSR_PS(M, H, modelPS);
+    T_CRS_PS(i)  = Get_traveltime_2D_CRS_PS(M, H, modelPS);
+    T_nCRS_PS(i) = Get_traveltime_2D_nCRS_PS(M, H, modelPS);
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><h2>Part III Compare approximations<a name="9"></a></h2><pre class="codeinput">figure(1)
+semilogx(R, TePP, <span class="string">'-black'</span>, <span class="string">'LineWidth'</span>,2);
+hold <span class="string">on</span>
+semilogx(R, T_CRS, <span class="string">'--blue'</span>, <span class="string">'LineWidth'</span>,2);
+semilogx(R, T_nCRS, <span class="string">'--g'</span>, <span class="string">'LineWidth'</span>,2);
+semilogx(R, T_DSR, <span class="string">'--r'</span>, <span class="string">'LineWidth'</span>,2);
+legend(<span class="string">'Exact'</span>, <span class="string">'CRS'</span>, <span class="string">'n-CRS'</span>, <span class="string">'DSR'</span>,<span class="string">'Location'</span>,<span class="string">'NorthEast'</span>);
+<span class="comment">% axis([0, 1.35, 0.35, 1.35]);</span>
+xlabel(<span class="string">'Radius of the circular reflector [km]'</span>)
+ylabel(<span class="string">'Traveltime [sec]'</span>)
+title(<span class="string">'Exact traveltime, CRS, DSR and n-CRS approximations'</span>)
+
+<span class="comment">% Add manualy</span>
+<span class="comment">%point diffractor limit</span>
+<span class="comment">%plane reflector limit</span>
+</pre><img vspace="5" hspace="5" src="figure_310_01.png" alt=""> <h2>Part IV Compare approximations<a name="10"></a></h2><pre class="codeinput">figure(2)
+semilogx(R, TePP, <span class="string">'-black'</span>, <span class="string">'LineWidth'</span>,2);
+hold <span class="string">on</span>
+semilogx(R, T_CRS, <span class="string">'--blue'</span>, <span class="string">'LineWidth'</span>,2);
+semilogx(R, T_nCRS, <span class="string">'--g'</span>, <span class="string">'LineWidth'</span>,2);
+semilogx(R, T_DSR, <span class="string">'--r'</span>, <span class="string">'LineWidth'</span>,2);
+semilogx(R, T_MF, <span class="string">'-.yellow'</span>, <span class="string">'LineWidth'</span>,2);
+semilogx(R, T_iCRS, <span class="string">'.m'</span>, <span class="string">'LineWidth'</span>,2);
+legend(<span class="string">'Exact'</span>, <span class="string">'CRS'</span>, <span class="string">'n-CRS'</span>, <span class="string">'DSR'</span>,<span class="string">'MF'</span>,<span class="string">'i-CRS'</span>,<span class="string">'Location'</span>,<span class="string">'NorthEast'</span>);
+<span class="comment">% axis([0, 1.35, 0.35, 1.35]);</span>
+xlabel(<span class="string">'Radius of the circular reflector [km]'</span>)
+ylabel(<span class="string">'Traveltime [sec]'</span>)
+title(<span class="string">'Exact traveltime, CRS, DSR, n-CRS, i-CRS and MF approximations'</span>)
+</pre><img vspace="5" hspace="5" src="figure_310_02.png" alt=""> <h2>Part V Compare approximations<a name="11"></a></h2><pre class="codeinput">figure(3)
+semilogx(R, TePS, <span class="string">'-black'</span>, <span class="string">'LineWidth'</span>,2);
+hold <span class="string">on</span>
+semilogx(R, T_CRS_PS, <span class="string">'--blue'</span>, <span class="string">'LineWidth'</span>,2);
+semilogx(R, T_nCRS_PS, <span class="string">'--g'</span>, <span class="string">'LineWidth'</span>,2);
+semilogx(R, T_DSR_PS, <span class="string">'--r'</span>, <span class="string">'LineWidth'</span>,2);
+legend(<span class="string">'Exact'</span>, <span class="string">'CRS-PS'</span>, <span class="string">'n-CRS-PS'</span>, <span class="string">'DSR-PS'</span>,<span class="string">'Location'</span>,<span class="string">'NorthEast'</span>);
+<span class="comment">% axis([0, 1.35, 0.35, 1.35]);</span>
+xlabel(<span class="string">'Radius of the circular reflector [km]'</span>)
+ylabel(<span class="string">'Traveltime [sec]'</span>)
+title(<span class="string">'Exact PS traveltime, CRS-PS, DSR-PS and n-CRS-PS approximations'</span>)
+</pre><img vspace="5" hspace="5" src="figure_310_03.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Check the idea that n-CRS sews two solutions: CRS and DSR
+
+%% Introduction
+% 
+% *Author*: Abakumov Ivan
+%
+% *Publication date*: 10th August 2016
+
+
+%% Define working folder, add links to Library and SeisLab 
+
+clear; close all; clc;
+mlibfolder = '/home/zmaw/u250128/Desktop/MLIB';
+path(path, mlibfolder);
+addmypath;
+current_folder = pwd;
+
+%% Define model parameters (See table 4.1): 
+
+Rmin = 0.0001;              % min radius of curvature (0.1 m) 
+Rmax = 10000;                % max radius of curvature (10000 km)
+R = logspace(log(Rmin)/log(10),log(Rmax)/log(10),50); 
+TePP = zeros(size(R));
+TePS = zeros(size(R));
+T_CRS = zeros(size(R));
+T_nCRS = zeros(size(R));
+T_DSR = zeros(size(R));
+T_MF = zeros(size(R));
+T_iCRS    = zeros(size(R));
+T_DSR_PS  = zeros(size(R));
+T_CRS_PS = zeros(size(R));
+T_nCRS_PS = zeros(size(R));
+
+for i=1:length(R)
+
+    alpha = pi/6;               % radian 
+    Rnip = 1.0;                 % km 
+    Rn   = Rnip + R(i);         % km
+    Vp   = 3.2;                 % km/s 
+    Vs   = 1.8;                 % km/s  
+    modelPP = [alpha, Rnip, Rn, Vp, Vp]; 
+    modelPS = [alpha, Rnip, Rn, Vp, Vs]; 
+
+
+    %% Set offset and midpoint displacement
+    m = 0.2;
+    h = 0.4; 
+    [M,H]=meshgrid(m,h); 
+
+    %% Part I: Calculate traveltimes of PP waves
+    TePP(i) = Get_traveltime_2D_exact(M,H,modelPP); 
+    TePS(i) = Get_traveltime_2D_exact(M,H,modelPS); 
+
+    %% Part II: Find traveltime approximation for PP and PS waves
+
+    % PP approximations
+    T_CRS(i)     = Get_traveltime_2D_CRS(M, H, modelPP);
+    T_nCRS(i)    = Get_traveltime_2D_nCRS(M, H, modelPP);
+    T_DSR(i)     = Get_traveltime_2D_DSR_PS(M, H, modelPP);
+    T_MF(i)      = Get_traveltime_2D_MF(M, H, modelPP);
+    T_iCRS(i)    = Get_traveltime_2D_iCRS(M, H, modelPP);
+    
+    % PS approximations
+    T_DSR_PS(i)  = Get_traveltime_2D_DSR_PS(M, H, modelPS);
+    T_CRS_PS(i)  = Get_traveltime_2D_CRS_PS(M, H, modelPS);
+    T_nCRS_PS(i) = Get_traveltime_2D_nCRS_PS(M, H, modelPS);
+end
+    
+
+%% Part III Compare approximations 
+ 
+figure(1)
+semilogx(R, TePP, '-black', 'LineWidth',2); 
+hold on 
+semilogx(R, T_CRS, 'REPLACE_WITH_DASH_DASHblue', 'LineWidth',2); 
+semilogx(R, T_nCRS, 'REPLACE_WITH_DASH_DASHg', 'LineWidth',2);
+semilogx(R, T_DSR, 'REPLACE_WITH_DASH_DASHr', 'LineWidth',2);
+legend('Exact', 'CRS', 'n-CRS', 'DSR','Location','NorthEast');
+% axis([0, 1.35, 0.35, 1.35]); 
+xlabel('Radius of the circular reflector [km]')
+ylabel('Traveltime [sec]')
+title('Exact traveltime, CRS, DSR and n-CRS approximations')
+
+% Add manualy
+%point diffractor limit
+%plane reflector limit
+
+
+%% Part IV Compare approximations 
+figure(2)
+semilogx(R, TePP, '-black', 'LineWidth',2); 
+hold on 
+semilogx(R, T_CRS, 'REPLACE_WITH_DASH_DASHblue', 'LineWidth',2); 
+semilogx(R, T_nCRS, 'REPLACE_WITH_DASH_DASHg', 'LineWidth',2);
+semilogx(R, T_DSR, 'REPLACE_WITH_DASH_DASHr', 'LineWidth',2);
+semilogx(R, T_MF, '-.yellow', 'LineWidth',2);
+semilogx(R, T_iCRS, '.m', 'LineWidth',2);
+legend('Exact', 'CRS', 'n-CRS', 'DSR','MF','i-CRS','Location','NorthEast');
+% axis([0, 1.35, 0.35, 1.35]); 
+xlabel('Radius of the circular reflector [km]')
+ylabel('Traveltime [sec]')
+title('Exact traveltime, CRS, DSR, n-CRS, i-CRS and MF approximations')
+
+%% Part V Compare approximations 
+ 
+figure(3)
+semilogx(R, TePS, '-black', 'LineWidth',2); 
+hold on 
+semilogx(R, T_CRS_PS, 'REPLACE_WITH_DASH_DASHblue', 'LineWidth',2); 
+semilogx(R, T_nCRS_PS, 'REPLACE_WITH_DASH_DASHg', 'LineWidth',2);
+semilogx(R, T_DSR_PS, 'REPLACE_WITH_DASH_DASHr', 'LineWidth',2);
+legend('Exact', 'CRS-PS', 'n-CRS-PS', 'DSR-PS','Location','NorthEast');
+% axis([0, 1.35, 0.35, 1.35]); 
+xlabel('Radius of the circular reflector [km]')
+ylabel('Traveltime [sec]')
+title('Exact PS traveltime, CRS-PS, DSR-PS and n-CRS-PS approximations')
+
+
+##### SOURCE END #####
+--></body></html>
